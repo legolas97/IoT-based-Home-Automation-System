@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+     <meta http-equiv="refresh" content="300">
+	<title>Test Page</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body style="background-image: url({% static 'images/cover.jpg' %});">
+
+
+	<div class="center">
+ 		<table style="border-style:none;border: 1">
+        <thead>
+            <td colspan="2" style="border-style: none;border: 1;padding: 25px;color: #b0deb5;font-family: Monospace;  font-weight: bold;font-size: 180%">
+              <h1> Home Automation System
+    </h1>
+        </td>
+
+        </thead>
+			<tbody>
+
+        {% for relay in all_relay_items %}
+{% if forloop.counter0|divisibleby:2 %}
+    		<tr><th style="padding: 20px;"><label style="color: #dce8d7e3;;font-family: Monospace;font-weight: bold;font-size: 180%"><input type="checkbox" name="{{ relay.id }}" {% if relay.r_status %} checked{% endif %}  /></br>{{ relay.r_name}}</label>
+					</th>
+
+{% else %}
+	<th style="padding: 20px;"><label style="color: #dce8d7e3;;font-family: Monospace;font-weight: bold;font-size: 180%"><input type="checkbox" name="{{ relay.id }}" {% if relay.r_status %} checked{% endif %} /></br>{{ relay.r_name }}</label>
+					</th></br>
+				</tr>
+{% endif %}
+{% endfor %}
+
+							</tbody>
+		</table>
+
+	</div>
+<script>
+
+
+    $(document).ready(function()
+{
+  $('input[type=checkbox]').change(function(e)
+  {
+      console.log(""+e.target.name+" Status : "+ e.target.checked);
+
+      status = 0;
+var relay_number =  e.target.name;
+
+  if (e.target.checked){status=1}
+  else {status=0}
+
+       $.ajax({
+        url: "{% url 'nextapp:ajax_update_relay_status' %}",
+         data: {
+status:status,
+             relay_number :relay_number
+        },
+        dataType: 'json',
+        type: "GET",
+        success: function (data){
+            if (data.Status == "Ok"){
+
+
+                console.log (""+relay_number+" : "+status +"updated successfully");
+
+            }
+            else {
+                console.log (""+relay_number+" : "+status +" Not updated ");
+
+            }
+                   //window.location.reload()
+
+
+			  },
+			  error: function( error )
+			  {
+				  alert("error:" + error.responseText);
+			  }
+
+		   } );
+
+
+
+});
+
+});
+
+
+
+</script>
+</body>
+</html>
