@@ -40,4 +40,4 @@ def get_relay_group_status (request):
         relay_group = None
     #print(data)
     return JsonResponse(relay_group, safe=False)
-
+##########################################################################
